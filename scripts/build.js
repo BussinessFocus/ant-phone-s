@@ -44,15 +44,10 @@ const isInteractive = process.stdout.isTTY;
 if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
   process.exit(1);
 }
-const pageConf = {
-  entry: pages.entrys,
-  plugins: pages.pages
-};
+
 // Generate configuration
-const config = merge(configFactory('production'),pageConf);
-// config = merge(conf, pageConf);
+const config = configFactory('production');
 console.log(config);
-// console.log(pages.pages);
 
 // We require that you explicitly set browsers and do not fall back to
 // browserslist defaults.

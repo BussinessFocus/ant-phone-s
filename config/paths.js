@@ -3,6 +3,8 @@
 const path = require('path');
 const fs = require('fs');
 const url = require('url');
+const globby = require('globby');
+// console.log(globby);
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
@@ -65,6 +67,29 @@ const resolveModule = (resolveFn, filePath) => {
   return resolveFn(`${filePath}.js`);
 };
 
+// 添加获取多页html模板方法
+const getMultiPageHtml = (filePath) => {
+    console.log(globby.sync(filePath, {
+        expandDirectories: {
+            files: ['*.html']
+        }
+    }));
+    return globby.sync(filePath, {
+        expandDirectories: {
+            files: ['*.html']
+        }
+    })
+        .reduce((arr, file) => {
+            let key = file.replace(/(^src\/|\.html$)/g, '');
+            return arr.concat([[
+                key,                        // 入口 chunk key（用文件路径可保证key唯一性）
+                resolveApp(file),            //html template url
+                resolveApp(`src/${key}.js`)  //入口js文件 url
+            ]])
+        }, []);
+}
+
+
 // config after eject: we're in ./config/
 module.exports = {
   dotenv: resolveApp('.env'),
@@ -83,6 +108,7 @@ module.exports = {
   appNodeModules: resolveApp('node_modules'),
   publicUrl: getPublicUrl(resolveApp('package.json')),
   servedPath: getServedPath(resolveApp('package.json')),
+    multiPageList:getMultiPageHtml("src")
 };
 
 

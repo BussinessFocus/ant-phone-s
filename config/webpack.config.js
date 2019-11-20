@@ -50,12 +50,63 @@ const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
+
+
+
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
 module.exports = function(webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
+// 新增获取多页面配置
+    const getMultiPageConfig = (files) => {
+        return files.reduce((data, file) => {
+            const [key, template, appJs] = file;
+            if( fs.existsSync( appJs ) ){
+                data.entryJs[key] = [
+                    isEnvDevelopment &&
+                    require.resolve('react-dev-utils/webpackHotDevClient'),
+                    appJs
+                ].filter(Boolean);
+                data.htmlPlugins.push(
+                    new HtmlWebpackPlugin(
+                        Object.assign(
+                            {},
+                            {
+                                inject: true,
+                                chunks: [key],
+                                template: template,
+                                filename: `${key}.html`
+                            },
+                            isEnvProduction
+                                ? {
+                                minify: {
+                                    removeComments: true,
+                                    collapseWhitespace: true,
+                                    removeRedundantAttributes: true,
+                                    useShortDoctype: true,
+                                    removeEmptyAttributes: true,
+                                    removeStyleLinkTypeAttributes: true,
+                                    keepClosingSlash: true,
+                                    minifyJS: true,
+                                    minifyCSS: true,
+                                    minifyURLs: true,
+                                },
+                            }
+                                : undefined
+                        )
+                    )
+                )
+            }
+            return data;
+        }, {
+            entryJs: { },
+            htmlPlugins: [ ]
+        })
+    }
 
+    const { entryJs, htmlPlugins } = getMultiPageConfig(paths.multiPageList);
+    
   // Variable used for enabling profiling in Production
   // passed into alias object. Uses a flag if passed into the build command
   const isEnvProductionProfile =
@@ -148,7 +199,8 @@ module.exports = function(webpackEnv) {
       : isEnvDevelopment && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
-    entry:[
+    entry:entryJs,
+      //entry:[
         // Include an alternative client for WebpackDevServer. A client's job is to
         // connect to WebpackDevServer by a socket and get notified about changes.
         // When you save a file, the client will either apply hot updates (in case
@@ -159,14 +211,14 @@ module.exports = function(webpackEnv) {
         // the line below with these two lines if you prefer the stock client:
         // require.resolve('webpack-dev-server/client') + '?/',
         // require.resolve('webpack/hot/dev-server'),
-        isEnvDevelopment &&
-        require.resolve('react-dev-utils/webpackHotDevClient'),
+        //isEnvDevelopment &&
+        //require.resolve('react-dev-utils/webpackHotDevClient'),
         // Finally, this is your app's code:
-        paths.appIndexJs,
+        //paths.appIndexJs,
         // We include the app code last so that if there is a runtime error during
         // initialization, it doesn't blow up the WebpackDevServer client, and
         // changing JS code would still trigger a refresh.
-      ].filter(Boolean),
+      //].filter(Boolean),
     output: {
       // The build folder.
       path: isEnvProduction ? paths.appBuild : undefined,
@@ -519,31 +571,32 @@ module.exports = function(webpackEnv) {
     },
     plugins: [
       // Generates an `index.html` file with the <script> injected.
-      new HtmlWebpackPlugin(
-        Object.assign(
-          {},
-          {
-            inject: true,
-            template: paths.appHtml,
-          },
-          isEnvProduction
-            ? {
-                minify: {
-                  removeComments: true,
-                  collapseWhitespace: true,
-                  removeRedundantAttributes: true,
-                  useShortDoctype: true,
-                  removeEmptyAttributes: true,
-                  removeStyleLinkTypeAttributes: true,
-                  keepClosingSlash: true,
-                  minifyJS: true,
-                  minifyCSS: true,
-                  minifyURLs: true,
-                },
-              }
-            : undefined
-        )
-      ),
+        ...htmlPlugins,
+      // new HtmlWebpackPlugin(
+      //   Object.assign(
+      //     {},
+      //     {
+      //       inject: true,
+      //       template: paths.appHtml,
+      //     },
+      //     isEnvProduction
+      //       ? {
+      //           minify: {
+      //             removeComments: true,
+      //             collapseWhitespace: true,
+      //             removeRedundantAttributes: true,
+      //             useShortDoctype: true,
+      //             removeEmptyAttributes: true,
+      //             removeStyleLinkTypeAttributes: true,
+      //             keepClosingSlash: true,
+      //             minifyJS: true,
+      //             minifyCSS: true,
+      //             minifyURLs: true,
+      //           },
+      //         }
+      //       : undefined
+      //   )
+      // ),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358
@@ -594,20 +647,20 @@ module.exports = function(webpackEnv) {
       new ManifestPlugin({
         fileName: 'asset-manifest.json',
         publicPath: publicPath,
-        generate: (seed, files, entrypoints) => {
-          const manifestFiles = files.reduce((manifest, file) => {
-            manifest[file.name] = file.path;
-            return manifest;
-          }, seed);
-          const entrypointFiles = entrypoints.main.filter(
-            fileName => !fileName.endsWith('.map')
-          );
-
-          return {
-            files: manifestFiles,
-            entrypoints: entrypointFiles,
-          };
-        },
+        // generate: (seed, files, entrypoints) => {
+        //   const manifestFiles = files.reduce((manifest, file) => {
+        //     manifest[file.name] = file.path;
+        //     return manifest;
+        //   }, seed);
+        //   const entrypointFiles = entrypoints.main.filter(
+        //     fileName => !fileName.endsWith('.map')
+        //   );
+        //
+        //   return {
+        //     files: manifestFiles,
+        //     entrypoints: entrypointFiles,
+        //   };
+        // },
       }),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how Webpack interprets its code. This is a practical
