@@ -15,9 +15,9 @@ process.on('unhandledRejection', err => {
 require('../config/env');
 
 
-const path = require('path');
+const path = require('path');//多
 const chalk = require('react-dev-utils/chalk');
-const fs = require('fs-extra');
+const fs = require('fs-extra');//不同
 const webpack = require('webpack');
 const configFactory = require('../config/webpack.config');
 const paths = require('../config/paths');

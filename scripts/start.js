@@ -19,7 +19,7 @@ const fs = require('fs');
 const chalk = require('react-dev-utils/chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-// const clearConsole = require('react-dev-utils/clearConsole');
+const clearConsole = require('react-dev-utils/clearConsole');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const {
   choosePort,
@@ -83,7 +83,7 @@ checkBrowsers(paths.appPath, isInteractive)
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
     const appName = require(paths.appPackageJson).name;
     const useTypeScript = fs.existsSync(paths.appTsConfig);
-    const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === 'true';
+    const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === 'true';/////////////
     const urls = prepareUrls(protocol, HOST, port);
     const devSocket = {
       warnings: warnings =>
@@ -111,15 +111,16 @@ checkBrowsers(paths.appPath, isInteractive)
       urls.lanUrlForConfig
     );
     const devServer = new WebpackDevServer(compiler, serverConfig);
+     
     // Launch WebpackDevServer.
     devServer.listen(port, HOST, err => {
-      console.log(123456);
-      console.log(config);
+     
+      
       if (err) {
         return console.log(err);
       }
       if (isInteractive) {
-        // clearConsole();
+        clearConsole();
       }
 
       // We used to support resolving modules according to `NODE_PATH`.
