@@ -69,11 +69,6 @@ const resolveModule = (resolveFn, filePath) => {
 
 // 添加获取多页html模板方法
 const getMultiPageHtml = (filePath) => {
-    console.log(globby.sync(filePath, {
-        expandDirectories: {
-            files: ['*.html']
-        }
-    }));
     return globby.sync(filePath, {
         expandDirectories: {
             files: ['*.html']

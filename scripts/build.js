@@ -26,8 +26,6 @@ const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const printHostingInstructions = require('react-dev-utils/printHostingInstructions');
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 const printBuildError = require('react-dev-utils/printBuildError');
-const pages = require('../config/webpack.configPages');//引入多个页面的配置
-const merge = require('webpack-merge');
 
 const measureFileSizesBeforeBuild =
   FileSizeReporter.measureFileSizesBeforeBuild;
@@ -47,7 +45,6 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
 
 // Generate configuration
 const config = configFactory('production');
-console.log(config);
 
 // We require that you explicitly set browsers and do not fall back to
 // browserslist defaults.
