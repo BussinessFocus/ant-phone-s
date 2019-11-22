@@ -32,7 +32,8 @@ const postcssNormalize = require('postcss-normalize');
 const appPackageJson = require(paths.appPackageJson);
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
-const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
+const shouldUseSourceMap = ((process.env.NODE_ENV=='production' && process.env.RUN_ENV != undefined) || process.env.NODE_ENV=='development') ? process.env.GENERATE_SOURCEMAP !== 'false':false;
+
 // Some apps do not need the benefits of saving a web request, so not inlining the chunk
 // makes for a smoother build process.
 const shouldInlineRuntimeChunk = process.env.INLINE_RUNTIME_CHUNK !== 'false';
@@ -384,6 +385,7 @@ module.exports = function(webpackEnv) {
     },
     module: {
       strictExportPresence: true,
+     
       rules: [
         // Disable require.ensure as it's not a standard language feature.
         { parser: { requireEnsure: false } },
@@ -400,10 +402,10 @@ module.exports = function(webpackEnv) {
                 formatter: require.resolve('react-dev-utils/eslintFormatter'),
                 eslintPath: require.resolve('eslint'),
                 resolvePluginsRelativeTo: __dirname,
-                
               },
               loader: require.resolve('eslint-loader'),
-            },
+              
+            }
           ],
           include: paths.appSrc,
         },
@@ -446,6 +448,7 @@ module.exports = function(webpackEnv) {
                       },
                     },
                   ],
+                  ["import", { libraryName: "antd-mobile", style: "css" }] //按需加载ant-mobile的样式
                 ],
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
                 // It enables caching results in ./node_modules/.cache/babel-loader/

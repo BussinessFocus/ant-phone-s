@@ -7,6 +7,7 @@
     "@svgr/webpack": "4.3.2",
     "@typescript-eslint/eslint-plugin": "^2.2.0",
     "@typescript-eslint/parser": "^2.2.0",
+    "antd-mobile": "^2.3.1",
     "babel-eslint": "10.0.3",
     "babel-jest": "^24.9.0",
     "babel-loader": "8.0.6",
@@ -59,9 +60,10 @@
     "workbox-webpack-plugin": "4.3.1"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "dev": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "buildTest": "set RUN_ENV=test && set REACT_APP_RUN_ENV=test && node scripts/build.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -132,6 +134,7 @@
     ]
   },
   "devDependencies": {
+    "babel-plugin-import": "^1.12.2",
     "html-webpack-plugin": "^4.0.0-beta.5",
     "webpack-merge": "^4.2.2"
   }
